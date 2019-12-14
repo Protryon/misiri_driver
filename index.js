@@ -228,7 +228,7 @@ function* receivePacket(endpoint) {
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const resetDevice = promisify(device.reset.bind(device));
+const resetDevice = async () => void 0; // promisify(device.reset.bind(device));
 
 // valid BPIs are 75 & 210
 const deviceConfig = {
