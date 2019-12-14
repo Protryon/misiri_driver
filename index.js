@@ -528,7 +528,9 @@ const bitStream = data => {
             }
             outStream.write(length, c);
         });
-        outStream.write(length, lrc(length, map, track.split('')));
+        if (track.length > 0) {
+            outStream.write(length, lrc(length, map, track.split('')));
+        }
         return output;
     };
 
