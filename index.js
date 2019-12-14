@@ -423,7 +423,7 @@ const bitStream = data => {
             rIndex += trackLength;
         }
         console.log('Incoming read: [RAW]');
-        console.log(trackData.map((track, i) => `Track ${i}: ${toHexString(track)}`).join('\n'));
+        console.log(trackData.map((track, i) => `Track ${i + 1}: ${toHexString(track)}`).join('\n'));
         const isoDecoded = [[], [], []];
         let track0Stream = bitStream(trackData[0]);
         let temp = null;
@@ -452,7 +452,7 @@ const bitStream = data => {
             }
         }
         console.log('Incoming read: [ISO]');
-        console.log(isoTracks.map((track, i) => `Track ${i}: ${track}`).join('\n'));
+        console.log(isoTracks.map((track, i) => `Track ${i + 1}: ${track}`).join('\n'));
         return { isoTracks, trackData };
     }
 
