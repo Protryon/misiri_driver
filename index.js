@@ -463,6 +463,7 @@ const bitStream = data => {
             isoDecoded[2].push(track1ISOAlphabet[temp.toString()] || '~');
         }
         let isoTracks = isoDecoded.map(track => track.join(''));
+
         for (let i = 0; i < isoTracks.length; ++i) {
             let endIndex = isoTracks[i].indexOf('?');
             let startIndex = isoTracks[i].indexOf(';');
@@ -475,6 +476,10 @@ const bitStream = data => {
                 }
             }
         }
+        let track0Checksum = lrc(7, track0ISOAlphabetInverted, isoTracks[0].split(''));
+        let track1Checksum = lrc(5, track1ISOAlphabetInverted, isoTracks[1].split(''));
+        let track2Checksum = lrc(5, track1ISOAlphabetInverted, isoTracks[2].split(''));
+        //TODO: validate checksums
         console.log('Incoming read: [ISO]');
         console.log(isoTracks.map((track, i) => `Track ${i + 1}: ${track}`).join('\n'));
         return { isoTracks, trackData };
