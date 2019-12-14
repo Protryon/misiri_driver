@@ -21,6 +21,7 @@ All testing was does with a Misiri MSR605X via USB on an Ubuntu 19.04 host syste
 ## Commands
 
 * read -- prepare the card reader to read a card, outputs in Raw and ISO
+* read_cycle -- read repeatedly until execution halts
 * write_raw -- prepare to write a raw hex stream to the card. usage: `write_raw track1/none track2/none track3/none`
 * clone -- prepare to read a card, and upon read success, prepare to write another card with raw equivalent data
 * write_iso -- prepare to write ISO data to a card, usage: `write_iso track1/none~track2/none~track3/none`

@@ -512,9 +512,15 @@ const bitStream = data => {
         if (command == 'read') {
             isReading = true;
             await sendControl(assemblePacket('enableRead'));
-            await readData();26
+            await readData();
             isReading = false;
             // read is disabled
+        } else if (command == 'read_cycle') {
+            while (true) {
+                isReading = true;
+                await sendControl(assemblePacket('enableRead'));
+                await readData();
+            }
         } else if (command == 'write_raw') {
             const data = arg.split(' ').map(datum => datum == 'none' || datum == 'null' ? '' : datum);
             if (data.length != 3) {
@@ -545,6 +551,7 @@ const bitStream = data => {
             console.log(`Invalid command: ${command}`);
             console.log('Valid commands:');
             console.log('* read -- prepare the card reader to read a card, outputs in Raw and ISO');
+            console.log('* read_cycle -- read repeatedly until execution halts');
             console.log('* write_raw -- prepare to write a raw hex stream to the card. usage: write_raw track1/none track2/none track3/none');
             console.log('* clone -- prepare to read a card, and upon read success, prepare to write another card with raw equivalent data');
             console.log('* write_iso -- prepare to write ISO data to a card, usage: write_iso track1/none~track2/none~track3/none');
