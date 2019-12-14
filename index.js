@@ -559,8 +559,8 @@ const bitStream = data => {
             }
         } else if (command == 'write_script') {
             script = require(arg);
-            script.getISOWrites().forEach(write => {
-                if (dawriteta.trim().length == 0) {
+            for (let write of script.getISOWrites()) {
+                if (write.trim().length == 0) {
                     return;
                 }
                 console.log('Script writing: ' + write.trim());
@@ -580,7 +580,7 @@ const bitStream = data => {
                     }
                     console.log(`Attempt #${i + 1}/5 failed, try again.`);
                 }
-            });
+            }
         } else {
             console.log(`Invalid command: ${command}`);
             console.log('Valid commands:');
