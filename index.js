@@ -96,6 +96,30 @@ const track1ISOAlphabet = Object.fromEntries(Object.entries({
 
 const track1ISOAlphabetInverted = Object.fromEntries(Object.entries(track1ISOAlphabet).map(([key, value]) => [value, parseInt(key)]));
 
+const lrc = (len, alphabet, data) => {
+    let bits = [];
+    for (let i = 0; i < len; ++i) {
+        bits[i] = 0;
+    }
+    for (let octet of data) {
+        let bin = alphabet[octet.toString()];
+        for (let i = 0; i < len; ++i) {
+            if (bin & (1 << i)) {
+                bits[i] += 1;
+            }
+        }
+    }
+    bits = bits.map(x => x % 2 == 1);
+    bits[0] = bits.slice(1).filter(x => x).length % 2 == 0;
+    let final = 0;
+    for (let i = 0; i < bits.length; ++i) {
+        if (bits[i]) {
+            final |= 1 << i;
+        }
+    }
+    return final;
+};
+
 const parsePacket = hex => {
     let acc = [];
     hex.split('').forEach((item, i) => {
@@ -499,6 +523,7 @@ const bitStream = data => {
             }
             outStream.write(length, c);
         });
+        outStream.write(length, lrc(length, map, track.split('')));
         return output;
     };
 
