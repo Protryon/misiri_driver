@@ -534,7 +534,12 @@ const bitStream = data => {
             const { trackData } = await readData();
             isReading = false;
 
-            await writeRawData(trackData);
+            for (let i = 0; i < 5; ++i) {
+                if (await writeRawData(trackData)) {
+                    break;
+                }
+                console.log(`Attempt #${i + 1}/5 failed, try again.`);
+            }
         } else if (command == 'write_iso') {
             const data = arg.split('~').map(datum => datum == 'none' || datum == 'null' ? '' : datum);
             if (data.length != 3) {
@@ -546,7 +551,36 @@ const bitStream = data => {
                 await encodeISO(track1ISOAlphabetInverted, 5, data[1]),
                 await encodeISO(track1ISOAlphabetInverted, 5, data[2]),
             ];
-            await writeRawData(isoEncoded);
+            for (let i = 0; i < 5; ++i) {
+                if (await writeRawData(isoEncoded)) {
+                    break;
+                }
+                console.log(`Attempt #${i + 1}/5 failed, try again.`);
+            }
+        } else if (command == 'write_script') {
+            script = require(arg);
+            script.getISOWrites().forEach(write => {
+                if (dawriteta.trim().length == 0) {
+                    return;
+                }
+                console.log('Script writing: ' + write.trim());
+                const data = write.trim().split('~').map(datum => datum == 'none' || datum == 'null' ? '' : datum);
+                if (data.length != 3) {
+                    console.log('invalid data, need 3 tracks, ~ delimited');
+                    return;
+                }
+                const isoEncoded = [
+                    await encodeISO(track0ISOAlphabetInverted, 7, data[0]),
+                    await encodeISO(track1ISOAlphabetInverted, 5, data[1]),
+                    await encodeISO(track1ISOAlphabetInverted, 5, data[2]),
+                ];
+                for (let i = 0; i < 5; ++i) {
+                    if (await writeRawData(isoEncoded)) {
+                        break;
+                    }
+                    console.log(`Attempt #${i + 1}/5 failed, try again.`);
+                }
+            });
         } else {
             console.log(`Invalid command: ${command}`);
             console.log('Valid commands:');
@@ -555,6 +589,7 @@ const bitStream = data => {
             console.log('* write_raw -- prepare to write a raw hex stream to the card. usage: write_raw track1/none track2/none track3/none');
             console.log('* clone -- prepare to read a card, and upon read success, prepare to write another card with raw equivalent data');
             console.log('* write_iso -- prepare to write ISO data to a card, usage: write_iso track1/none~track2/none~track3/none');
+            console.log('* write_script -- enables write_iso macro to be loaded');
         }
     });
     
