@@ -573,15 +573,15 @@ const bitStream = data => {
                 console.log(`Attempt #${i + 1}/5 failed, try again.`);
             }
         } else if (command == 'write_iso') {
-            const data = arg.split('~').map(datum => datum == 'none' || datum == 'null' ? '' : datum);
+            const data = arg.split('~').map(datum => datum == 'none' || datum == 'null' ? '' : (datum == 'erase' ? '\0' : datum));
             if (data.length != 3) {
                 console.log('invalid data, need 3 tracks, ~ delimited');
                 return;
             }
             const isoEncoded = [
-                await encodeISO(track0ISOAlphabetInverted, 7, data[0]),
-                await encodeISO(track1ISOAlphabetInverted, 5, data[1]),
-                await encodeISO(track1ISOAlphabetInverted, 5, data[2]),
+                data[0] == '\0' ? [0] : await encodeISO(track0ISOAlphabetInverted, 7, data[0]),
+                data[1] == '\0' ? [0] : await encodeISO(track1ISOAlphabetInverted, 5, data[1]),
+                data[2] == '\0' ? [0] : await encodeISO(track1ISOAlphabetInverted, 5, data[2]),
             ];
             for (let i = 0; i < 5; ++i) {
                 if (await writeRawData(isoEncoded)) {
@@ -596,7 +596,7 @@ const bitStream = data => {
                     return;
                 }
                 console.log('Script writing: ' + write.trim());
-                const data = write.trim().split('~').map(datum => datum == 'none' || datum == 'null' ? '' : datum);
+                const data = write.trim().split('~').map(datum => datum == 'none' || datum == 'null' ? '' : (datum == 'erase' ? '\0' : datum));
                 if (data.length != 3) {
                     console.log('invalid data, need 3 tracks, ~ delimited');
                     return;
