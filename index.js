@@ -602,9 +602,9 @@ const bitStream = data => {
                     return;
                 }
                 const isoEncoded = [
-                    await encodeISO(track0ISOAlphabetInverted, 7, data[0]),
-                    await encodeISO(track1ISOAlphabetInverted, 5, data[1]),
-                    await encodeISO(track1ISOAlphabetInverted, 5, data[2]),
+                    data[0] == '\0' ? [0] : await encodeISO(track0ISOAlphabetInverted, 7, data[0]),
+                    data[1] == '\0' ? [0] : await encodeISO(track1ISOAlphabetInverted, 5, data[1]),
+                    data[2] == '\0' ? [0] : await encodeISO(track1ISOAlphabetInverted, 5, data[2]),
                 ];
                 for (let i = 0; i < 5; ++i) {
                     if (await writeRawData(isoEncoded)) {
